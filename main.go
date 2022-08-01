@@ -1,55 +1,67 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"goMagicEden/handler"
+	"goMagicEden/models"
 	"log"
-	"net/http"
-	"os"
+
+	"github.com/gin-gonic/gin"
+
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
-// Token struct
-type Token struct {
-	MintAddress          string
-	Owner                string
-	Supply               int
-	Collection           string
-	CollectionName       string
-	Name                 string
-	UpdateAuthority      string
-	PrimarySaleHappened  bool
-	SellerFeeBasisPoints int
-	Image                string
-	ListStatus           string
-	TokenAddress         string
-	Attributes           []Attributes
-}
-
-// Attributes struct
-type Attributes struct {
-	TraitType string `json:"trait_type"`
-	Value     string
-}
-
 func main() {
-	response, err := http.Get("https://api-mainnet.magiceden.dev/v2/wallets/GVUAKf19vnM9c5WZxXYBLAy6hdcpaS6PuFWZfrZcTTo4/tokens?offset=0&listStatus=both")
+
+	// tokenList := getDataFromAPI()
+	// fmt.Println(tokenList)
+
+	dsn := "host=localhost user=postgres password=postgres dbname=magic-eden port=5432 sslmode=disable TimeZone=Asia/Jakarta"
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if err != nil {
-		fmt.Print(err.Error())
-		os.Exit(1)
+		log.Fatal("DB Connection Error")
 	}
 
-	responseData, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
+	fmt.Println("DATABASE CONNECTION SUCCESS")
 
-	var tokenList []Token
-	if err := json.Unmarshal(responseData, &tokenList); err != nil {
-		log.Fatal(err)
-	}
+	db.AutoMigrate(&models.Token{})
 
-	fmt.Println(tokenList)
+	// CREATE
+	// for _, t := range tokenList {
+	// 	t.CreatedAt = time.Now()
+	// 	t.UpdatedAt = time.Now()
+	// 	err = db.Create(&t).Error
+	// 	if err != nil {
+	// 		log.Fatal("Error creating token")
+	// 	}
+	// }
+
+	// READ
+	// var tokens []models.Token
+	// err = db.Find(&tokens).Error
+	// if err != nil {
+	// 	fmt.Println("Error finding token")
+	// }
+
+	// DELETE
+	// var deleteToken models.Token
+	// err = db.Debug().Where("mint_address = ?", "8ESNUs5p8hu67byo971piyWHaXGNVvvJsoYKK2iA5JgT").Find(&deleteToken).Error
+	// if err != nil {
+	// 	fmt.Println("Error finding token")
+	// }
+	// fmt.Println(deleteToken)
+	// err = db.Delete(&deleteToken).Error
+
+	router := gin.Default()
+
+	router.GET("/", handler.RootHandler)
+
+	router.Run()
 
 }
+
+// func PostData(tokenList []Token){
+
+// }
