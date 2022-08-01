@@ -14,8 +14,8 @@ import (
 
 func main() {
 
-	tokenList := token.GetDataFromAPI()
-	fmt.Println(tokenList)
+	// tokenList := token.GetDataFromAPI()
+	// fmt.Println(tokenList)
 
 	dsn := "host=localhost user=postgres password=postgres dbname=magic-eden port=5432 sslmode=disable TimeZone=Asia/Jakarta"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
@@ -28,9 +28,10 @@ func main() {
 
 	db.AutoMigrate(&token.Token{})
 
-	// tokenRepository := token.NewRepository(db)
-	// tokens, err := tokenRepository.FindAll()
-	// fmt.Println(tokens)
+	tokenRepository := token.NewRepository(db)
+	tokenService := token.NewService(tokenRepository)
+	tokens, err := tokenService.FindAll()
+	fmt.Println(tokens)
 
 	// CREATE
 	// for _, t := range tokenList {
