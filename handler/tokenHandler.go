@@ -50,7 +50,7 @@ func (h *tokenHandler) PostWalletContents(c *gin.Context) {
 	walletAddress := c.Query("wallet_address")
 	tokenList, err := token.GetDataFromAPI(walletAddress)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"errors": "Wallet Not Found, Can't Post Anything",
 		})
 		return
@@ -107,7 +107,7 @@ func (h *tokenHandler) DeleteToken(c *gin.Context) {
 
 	token, err := h.tokenService.Delete(RequestBody.TokenMintAddress)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
+		c.JSON(http.StatusNotFound, gin.H{
 			"errors": "Can't find token",
 		})
 		return
