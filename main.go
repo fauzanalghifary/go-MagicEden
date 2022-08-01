@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"goMagicEden/handler"
-	"goMagicEden/models"
+	"goMagicEden/token"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -14,8 +14,8 @@ import (
 
 func main() {
 
-	// tokenList := getDataFromAPI()
-	// fmt.Println(tokenList)
+	tokenList := token.GetDataFromAPI()
+	fmt.Println(tokenList)
 
 	dsn := "host=localhost user=postgres password=postgres dbname=magic-eden port=5432 sslmode=disable TimeZone=Asia/Jakarta"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
@@ -26,7 +26,11 @@ func main() {
 
 	fmt.Println("DATABASE CONNECTION SUCCESS")
 
-	db.AutoMigrate(&models.Token{})
+	db.AutoMigrate(&token.Token{})
+
+	// tokenRepository := token.NewRepository(db)
+	// tokens, err := tokenRepository.FindAll()
+	// fmt.Println(tokens)
 
 	// CREATE
 	// for _, t := range tokenList {
@@ -39,14 +43,14 @@ func main() {
 	// }
 
 	// READ
-	// var tokens []models.Token
+	// var tokens []token.Token
 	// err = db.Find(&tokens).Error
 	// if err != nil {
 	// 	fmt.Println("Error finding token")
 	// }
 
 	// DELETE
-	// var deleteToken models.Token
+	// var deleteToken token.Token
 	// err = db.Debug().Where("mint_address = ?", "8ESNUs5p8hu67byo971piyWHaXGNVvvJsoYKK2iA5JgT").Find(&deleteToken).Error
 	// if err != nil {
 	// 	fmt.Println("Error finding token")
