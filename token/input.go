@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"os"
 	"time"
@@ -38,8 +37,12 @@ type Attributes struct {
 	Value     string
 }
 
-func GetDataFromAPI() Response {
-	response, err := http.Get("https://api-mainnet.magiceden.dev/v2/wallets/GVUAKf19vnM9c5WZxXYBLAy6hdcpaS6PuFWZfrZcTTo4/tokens?offset=0&listStatus=both")
+// GetDataFromAPI Func
+func GetDataFromAPI(walletAddress string) (Response, error) {
+
+	url := "https://api-mainnet.magiceden.dev/v2/wallets/" + walletAddress + "/tokens?offset=0&listStatus=both"
+
+	response, err := http.Get(url)
 
 	if err != nil {
 		fmt.Print(err.Error())
@@ -47,13 +50,8 @@ func GetDataFromAPI() Response {
 	}
 
 	responseData, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
 
 	var tokenList Response
-	if err := json.Unmarshal(responseData, &tokenList); err != nil {
-		log.Fatal(err)
-	}
-	return tokenList
+	err = json.Unmarshal(responseData, &tokenList)
+	return tokenList, err
 }

@@ -2,6 +2,7 @@ package token
 
 import "time"
 
+// Token struct
 type Token struct {
 	ID                   int
 	MintAddress          string
